@@ -85,7 +85,7 @@ def profile(username):
     username = mongo.db.users.find_one(
         {"username": session["user"]})["username"]
 
-    if session['user']:
+    if session["user"]:
         return render_template("profile.html", username=username)
 
     return redirect(url_for("login"))
@@ -93,7 +93,7 @@ def profile(username):
 
 @app.route("/logout")
 def logout():
-    # remove user from session cookies
+    # remove user from session cookie
     flash("You have been logged out")
     session.pop("user")
     return redirect(url_for("login"))
@@ -117,6 +117,14 @@ def add_task():
 
     categories = mongo.db.categories.find().sort("category_name", 1)
     return render_template("add_task.html", categories=categories)
+
+
+@app.route("/edit_task/<task_id>", methods=["GET", "POST"])
+def edit_task(task_id):
+    task = mongo.db.tasks.find_one({"_id": ObjectId(task_id)})
+    categories = mongo.db.categories.find().sort("category_name", 1)
+    return render_template("edit_task.html", task=task, categories=categories)
+
 
 if __name__ == "__main__":
     app.run(host=os.environ.get("IP"),
